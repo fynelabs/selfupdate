@@ -10,13 +10,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go-version: [1.14, 1.18]
+        go-version: ['1.19.x', 'stable']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         persist-credentials: false
-    - uses: WillAbides/setup-go-faster@v1.7.0
+    - uses: WillAbides/setup-go-faster@v1
       with:
         go-version: ${{ matrix.go-version }}
 
@@ -24,17 +24,4 @@ jobs:
       run: sudo apt-get update && sudo apt-get install bsdiff
 
     - name: Test
-      run: go test -tags ci ./...
-
-    - name: Update coverage
-      run: |
-        go get github.com/mattn/goveralls
-        set -e
-        go test -tags ci -covermode=atomic -coverprofile=coverage.out ./...
-      if: ${{ runner.os == 'Linux' }}
-
-    - name: Update PR Coverage
-      uses: shogo82148/actions-goveralls@v1
-      with:
-        path-to-profile: coverage.out
-      if: ${{ runner.os == 'Linux' && matrix.go-version == '1.18' }}
+      run: go test ./...

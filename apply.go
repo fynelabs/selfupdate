@@ -9,14 +9,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
-var (
-	openFile = os.OpenFile
-)
+var openFile = os.OpenFile
 
 // Apply performs an update of the current executable (or opts.TargetFile, if set) with the contents of the given io.Reader.
 //
@@ -88,7 +85,7 @@ func apply(update io.Reader, opts *Options) error {
 		}
 	} else {
 		// no patch to apply, go on through
-		if newBytes, err = ioutil.ReadAll(update); err != nil {
+		if newBytes, err = io.ReadAll(update); err != nil {
 			return err
 		}
 	}
@@ -315,7 +312,7 @@ func (o *Options) verifySignature(updated []byte) error {
 	if publicKey, ok := o.PublicKey.(ed25519.PublicKey); ok {
 		valid := ed25519.Verify(publicKey, updated, o.Signature)
 		if !valid {
-			return fmt.Errorf("invalid ed25519 signature")
+			return errors.New("invalid ed25519 signature")
 		}
 		return nil
 	}

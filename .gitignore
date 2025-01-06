@@ -6,6 +6,7 @@
 *.dylib
 cmd/selfupdatectl/selfupdatectl
 cmd/example/example
+internal/binarydist/test.*
 
 # Test binary, built with `go test -c`
 *.test

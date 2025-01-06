@@ -2,12 +2,14 @@ package selfupdate
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"text/template"
 )
 
@@ -54,10 +56,9 @@ func (h *HTTPSource) Get(v *Version) (io.ReadCloser, int64, error) {
 		return nil, 0, err
 	}
 
-	if v != nil {
-		if !v.Date.IsZero() {
-			request.Header.Add("If-Modified-Since", v.Date.Format(http.TimeFormat))
-		}
+	if v != nil && !v.Date.IsZero() {
+		request.Header.Add("If-Modified-Since", v.Date.Format(http.TimeFormat))
+
 	}
 
 	response, err := h.client.Do(request)
@@ -105,7 +106,7 @@ func (h *HTTPSource) LatestVersion() (*Version, error) {
 
 	lastModified := resp.Header.Get("Last-Modified")
 	if lastModified == "" {
-		return nil, fmt.Errorf("no Last-Modified served")
+		return nil, errors.New("no Last-Modified served")
 	}
 
 	t, err := http.ParseTime(lastModified)
@@ -145,7 +146,7 @@ func replaceURLTemplate(base string) string {
 		return base
 	}
 
-	buf := &bytes.Buffer{}
+	buf := &strings.Builder{}
 	err = t.Execute(buf, p)
 	if err != nil {
 		return base

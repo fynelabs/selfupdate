@@ -213,15 +213,16 @@ func triggerSchedule(updater *Updater) {
 
 func delayUntilNextTriggerAt(repeating Repeating, offset time.Time) time.Duration {
 	now := time.Now().In(offset.Location())
-	var next time.Time
+	month, day, hour := now.Month(), now.Day(), now.Hour()
 	switch repeating {
-	case Hourly:
-		next = time.Date(now.Year(), now.Month(), now.Day(), now.Hour()+1, offset.Minute(), offset.Second(), offset.Nanosecond(), offset.Location())
-	case Daily:
-		next = time.Date(now.Year(), now.Month(), now.Day()+1, offset.Hour(), offset.Minute(), offset.Second(), offset.Nanosecond(), offset.Location())
 	case Monthly:
-		next = time.Date(now.Year(), now.Month()+1, offset.Day(), offset.Hour(), offset.Minute(), offset.Second(), offset.Nanosecond(), offset.Location())
+		month++
+	case Daily:
+		day++
+	case Hourly:
+		hour++
 	}
 
+	next := time.Date(now.Year(), month, day, hour, offset.Minute(), offset.Second(), offset.Nanosecond(), offset.Location())
 	return next.Sub(now)
 }

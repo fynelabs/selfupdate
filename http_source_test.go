@@ -2,7 +2,7 @@ package selfupdate
 
 import (
 	"crypto/ed25519"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"runtime"
@@ -37,7 +37,7 @@ func TestHTTPSourceCheckSignature(t *testing.T) {
 	assert.NotNil(t, file)
 	assert.Equal(t, int64(19320832), contentLength)
 
-	body, err := ioutil.ReadAll(file)
+	body, err := io.ReadAll(file)
 	assert.Nil(t, err)
 	assert.NotNil(t, body)
 	file.Close()

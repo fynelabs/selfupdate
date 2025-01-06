@@ -7,7 +7,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -72,7 +71,7 @@ func publicKeyVerifier(publicKey string) (ed25519.PublicKey, error) {
 	}
 	defer publicKeyFile.Close()
 
-	b, err := ioutil.ReadAll(publicKeyFile)
+	b, err := io.ReadAll(publicKeyFile)
 	if err != nil {
 		return []byte{}, err
 	}

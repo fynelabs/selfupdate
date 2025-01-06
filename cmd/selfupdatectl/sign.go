@@ -5,7 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -62,8 +62,7 @@ func (a *application) sign(executable string) error {
 		return fmt.Errorf("ed25519 signature must be 64 bytes long and was %v", len(signature))
 	}
 
-	err = ioutil.WriteFile(executable+".ed25519", signature, 0644)
-	return err
+	return os.WriteFile(executable+".ed25519", signature, 0644)
 }
 
 func privateKeySigner(privateKey string) (ed25519.PrivateKey, error) {
@@ -73,7 +72,7 @@ func privateKeySigner(privateKey string) (ed25519.PrivateKey, error) {
 	}
 	defer privateKeyFile.Close()
 
-	b, err := ioutil.ReadAll(privateKeyFile)
+	b, err := io.ReadAll(privateKeyFile)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -103,5 +102,5 @@ func executableContent(executable string) ([]byte, error) {
 	}
 	defer executableFile.Close()
 
-	return ioutil.ReadAll(executableFile)
+	return io.ReadAll(executableFile)
 }

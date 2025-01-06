@@ -3,6 +3,6 @@
 
 package selfupdate
 
-func hideFile(path string) error {
+func hideFile(_ string) error {
 	return nil
 }

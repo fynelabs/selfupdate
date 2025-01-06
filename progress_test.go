@@ -2,7 +2,7 @@ package selfupdate
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,7 +22,7 @@ func Test_ProgressReaderWithContentLength(t *testing.T) {
 		},
 	}
 
-	r, err := ioutil.ReadAll(&pr)
+	r, err := io.ReadAll(&pr)
 	assert.NotNil(t, r)
 	assert.Nil(t, err)
 	assert.Equal(t, float64(1), lastPercentage)
@@ -42,7 +42,7 @@ func Test_ProgressReaderWithoutContentLength(t *testing.T) {
 		},
 	}
 
-	r, err := ioutil.ReadAll(&pr)
+	r, err := io.ReadAll(&pr)
 	assert.NotNil(t, r)
 	assert.Nil(t, err)
 	assert.Equal(t, float64(1), lastPercentage)

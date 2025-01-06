@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/pem"
-	"io/ioutil"
+	"os"
 
 	"github.com/urfave/cli/v2"
 )
@@ -55,7 +55,7 @@ func (a *application) createKeys() error {
 		Bytes: b,
 	}
 
-	err = ioutil.WriteFile(a.privateKey, pem.EncodeToMemory(block), 0600)
+	err = os.WriteFile(a.privateKey, pem.EncodeToMemory(block), 0600)
 	if err != nil {
 		return err
 	}
@@ -70,6 +70,6 @@ func (a *application) createKeys() error {
 		Bytes: b,
 	}
 
-	err = ioutil.WriteFile(a.publicKey, pem.EncodeToMemory(block), 0644)
+	err = os.WriteFile(a.publicKey, pem.EncodeToMemory(block), 0644)
 	return err
 }
