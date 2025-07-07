@@ -107,7 +107,7 @@ func apply(update io.Reader, opts *Options) error {
 	updateDir := filepath.Dir(opts.TargetPath)
 	filename := filepath.Base(opts.TargetPath)
 
-	// Copy the contents of newbinary to a new executable file
+	// Copy the contents of the new binary to a new executable file
 	newPath := filepath.Join(updateDir, fmt.Sprintf(".%s.new", filename))
 	fp, err := openFile(newPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, opts.TargetMode)
 	if err != nil {
@@ -120,7 +120,7 @@ func apply(update io.Reader, opts *Options) error {
 	if err != nil {
 		return err
 	}
-	//don't call fp.Sync().system power off ,file will lost
+	// if we don't call fp.Sync(), a system power off could lose the file
 	fp.Sync()
 	// if we don't call fp.Close(), windows won't let us move the new executable
 	// because the file will still be "in use"
@@ -144,7 +144,7 @@ func apply(update io.Reader, opts *Options) error {
 		return err
 	}
 
-	// move the new exectuable in to become the new program
+	// move the new executable in to become the new program
 	err = os.Rename(newPath, opts.TargetPath)
 
 	if err != nil {
