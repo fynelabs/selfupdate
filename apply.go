@@ -111,6 +111,11 @@ func apply(update io.Reader, opts *Options) error {
 	newPath := filepath.Join(updateDir, fmt.Sprintf(".%s.new", filename))
 	fp, err := openFile(newPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, opts.TargetMode)
 	if err != nil {
+		if isTranslocatedPath(newPath) {
+			// A quarantined macOS application runs from a read-only mount until the user moves it with
+			// Finder, so the write fails with a cryptic error. Name the real cause instead.
+			return fmt.Errorf("%w: %v", ErrTranslocated, err)
+		}
 		return err
 	}
 	os.Chmod(newPath, opts.TargetMode)

@@ -77,6 +77,10 @@ func (u *Updater) CheckNow() error {
 	u.lock.Lock()
 	defer u.lock.Unlock()
 
+	if err := checkTranslocated(); err != nil {
+		return err
+	}
+
 	v := u.conf.Current
 	if v == nil {
 		mtime, err := lastModifiedExecutable()
@@ -137,6 +141,13 @@ func (u *Updater) Restart() error {
 
 // Manage sets up an Updater and runs it to manage the current executable.
 func Manage(conf *Config) (*Updater, error) {
+	// A macOS application that Gatekeeper is running from an App Translocation mount can never be
+	// updated in place, so report that once up front rather than failing on every scheduled check.
+	if err := checkTranslocated(); err != nil {
+		logError("Upgrade error: %v\n", err)
+		return nil, err
+	}
+
 	updater := &Updater{conf: conf}
 
 	go func() {
@@ -161,6 +172,10 @@ func Manage(conf *Config) (*Updater, error) {
 
 // ManualUpdate applies a specific update manually instead of managing the update of this app automatically.
 func ManualUpdate(s Source, publicKey ed25519.PublicKey) error {
+	if err := checkTranslocated(); err != nil {
+		return err
+	}
+
 	v := &Version{}
 	r, _, err := s.Get(v)
 	if err != nil {

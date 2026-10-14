@@ -81,6 +81,8 @@ func main() {
 }
 ```
 
+On macOS, `Manage`, `CheckNow` and `ManualUpdate` return `selfupdate.ErrTranslocated` when Gatekeeper is running the application from an App Translocation mount. This happens to a quarantined application that was not moved with Finder, and no update can be written there. `Manage` reports it once through `LogError` and schedules no check. The user has to quit, move the application with Finder (for example into their Applications folder) and open it from there.
+
 If you desire a GUI element and visual integration with Fyne, you should check [fyneselfupdate](https://github.com/fynelabs/fyneselfupdate).
 
 To help you manage your key, sign binary and upload them to an online S3 bucket the `selfupdatectl` tool is provided. You can check its documentation [here](https://github.com/fynelabs/selfupdate/tree/main/cmd/selfupdatectl).
